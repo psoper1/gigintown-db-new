@@ -39,7 +39,8 @@ class Event(models.Model):
     Venue = models.CharField(max_length=255, null=False)
     Price = models.CharField(max_length=255, null=True)
     IsAllAges = models.BooleanField(null=False)
-    Link = models.TextField(max_length=2000, null=True)
+    Link = models.TextField(max_length=2000, null=True, blank='True')
+    Created_By_Email = models.CharField(max_length=255, null=False, default='user@user.com')
 
     def __str__(self):
         return self.Title

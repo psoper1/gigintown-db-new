@@ -76,22 +76,48 @@ class EventCreateView(generics.CreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
-@api_view(['POST'])
-@permission_classes([AllowAny])
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def save_event(request, event_id):
+#     user = request.user
+#     try:
+#         event = Event.objects.get(pk=event_id)
+#     except Event.DoesNotExist:
+#         return Response({'detail': 'Event not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+#     if Event.objects.filter(pk=event_id, users_who_saved=user).exists():
+#         return Response({'detail': 'Event already saved.'}, status=status.HTTP_400_BAD_REQUEST)
+
+#     event.users_who_saved.add(user)
+
+#     serializer = EventSerializer(event)
+#     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['POST', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def save_event(request, event_id):
     user = request.user
+
     try:
         event = Event.objects.get(pk=event_id)
     except Event.DoesNotExist:
         return Response({'detail': 'Event not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    if Event.objects.filter(pk=event_id, users_who_saved=user).exists():
-        return Response({'detail': 'Event already saved.'}, status=status.HTTP_400_BAD_REQUEST)
+    if request.method == 'POST':
+        if Event.objects.filter(pk=event_id, users_who_saved=user).exists():
+            return Response({'detail': 'Event already saved.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    event.users_who_saved.add(user)
+        event.users_who_saved.add(user)
 
-    serializer = EventSerializer(event)
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = EventSerializer(event)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    elif request.method == 'DELETE':
+        if not Event.objects.filter(pk=event_id, users_who_saved=user).exists():
+            return Response({'detail': 'Event not found in saved events.'}, status=status.HTTP_404_NOT_FOUND)
+
+        event.users_who_saved.remove(user)
+        return Response({'detail': 'Event removed from saved events successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
     
 @api_view(['GET'])
