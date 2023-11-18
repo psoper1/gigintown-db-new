@@ -27,7 +27,8 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'first_name', 'last_name', 'account_type', 'saved_events']
+        fields = ['email', 'first_name', 'last_name', 'account_type', 'saved_events',
+                  'address', 'city', 'state', 'zipCode', 'businessName', 'website']
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -35,10 +36,17 @@ class CustomUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, write_only=True)
     account_type = serializers.CharField(max_length=20, write_only=True)
     saved_events = serializers.PrimaryKeyRelatedField(many=True, queryset=Event.objects.all(), required=False)
+    address = serializers.CharField(allow_null=True, required=False)
+    city = serializers.CharField(allow_null=True, required=False)
+    state = serializers.CharField(allow_null=True, required=False)
+    zipCode = serializers.CharField(allow_null=True, required=False)
+    businessName = serializers.CharField(allow_null=True, required=False)
+    website = serializers.CharField(allow_null=True, required=False)
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'password', 'first_name', 'last_name', 'account_type', 'saved_events')
+        fields = ('email', 'password', 'first_name', 'last_name', 'account_type', 'saved_events',
+                  'address', 'city', 'state', 'zipCode', 'businessName', 'website')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
