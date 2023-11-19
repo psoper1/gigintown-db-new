@@ -50,12 +50,12 @@ class CustomUser(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     account_type = models.CharField(max_length=20, null=True)
     saved_events = models.ManyToManyField(Event, related_name='users_who_saved', blank=True)
-    address = models.CharField(max_length=255, null=True)
-    city = models.CharField(max_length=255, null=True)
-    state = models.CharField(max_length=255, null=True)
-    zipCode = models.CharField(max_length=255, null=True)
-    businessName = models.CharField(max_length=255, null =True)
-    website = models.CharField(max_length=255, null=True)
+    address = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    state = models.CharField(max_length=255, null=True, blank=True)
+    zipCode = models.CharField(max_length=255, null=True, blank=True)
+    businessName = models.CharField(max_length=255, null =True, blank=True)
+    website = models.CharField(max_length=255, null=True, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ['account_type']
